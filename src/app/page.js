@@ -8,21 +8,7 @@ export default async function HomePage() {
 
   const boardsData = await Board.find().lean();
 
-  // Convert _id fields to strings
-  const boards = boardsData.map((board) => ({
-    ...board,
-    _id: board._id.toString(),
-    lists: (board.lists || []).map((list) => ({
-      ...list,
-      _id: list._id?.toString() || Date.now().toString(),
-      id: list._id?.toString() || Date.now().toString(),
-      cards: (list.cards || []).map((card) => ({
-        ...card,
-        _id: card._id?.toString() || Date.now().toString(),
-        id: card._id?.toString() || Date.now().toString(),
-      })),
-    })),
-  }));
+  cconst boards = transformBoards(boardsData);
 
   return <HomeClient initialBoards={boards} />;
 }

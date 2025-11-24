@@ -40,8 +40,9 @@ export default function HomeClient({ initialBoards }) {
 
       if (!res.ok) throw new Error('Failed to update board');
       
-      const updated = await res.json();
-      setBoards(boards.map((b) => (b._id === id ? updated : b)));
+    //   const updated = await res.json();
+    //   setBoards(boards.map((b) => (b._id === id ? updated : b)));
+	  await fetchBoards();
       return true;
     } catch (error) {
       console.error('Error saving edit:', error);
