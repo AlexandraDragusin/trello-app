@@ -8,7 +8,7 @@ export async function POST(request) {
   try {
     await connect();
     const { name } = await request.json();
-    
+
     const board = await Board.create({ 
       name, 
       lists: [] 
@@ -24,7 +24,7 @@ export async function GET() {
   try {
     await connect();
     const boards = await Board.find().lean();
-    return NextResponse.json(boards.map(transformBoard));
+    return NextResponse.json(transformBoards(boards));
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

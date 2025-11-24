@@ -2,7 +2,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import BoardCard from "./BoardCard";
@@ -23,7 +22,7 @@ export default function HomeClient({ initialBoards }) {
 
   const addBoard = async () => {
     if (!newBoardName.trim()) return;
-    
+
     const res = await fetch("/api/boards", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
