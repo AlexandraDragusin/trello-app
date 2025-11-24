@@ -11,6 +11,16 @@ export default function HomeClient({ initialBoards }) {
   const [boards, setBoards] = useState(initialBoards || []);
   const [newBoardName, setNewBoardName] = useState("");
 
+   const fetchBoards = async () => {
+    try {
+      const res = await fetch('/api/boards');
+      const boardsData = await res.json();
+      setBoards(boardsData);
+    } catch (error) {
+      console.error('Error fetching boards:', error);
+    }
+  };
+
   const addBoard = async () => {
     if (!newBoardName.trim()) return;
     
@@ -40,8 +50,6 @@ export default function HomeClient({ initialBoards }) {
 
       if (!res.ok) throw new Error('Failed to update board');
       
-    //   const updated = await res.json();
-    //   setBoards(boards.map((b) => (b._id === id ? updated : b)));
 	  await fetchBoards();
       return true;
     } catch (error) {
