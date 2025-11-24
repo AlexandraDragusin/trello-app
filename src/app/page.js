@@ -2,6 +2,7 @@
 import connect from "@/lib/mongodb";
 import Board from "@/models/Board";
 import HomeClient from "./HomeClient";
+import { transformBoards } from "@/lib/mongoUtils";
 
 export default async function HomePage() {
   await connect();
