@@ -1,3 +1,4 @@
+// components/board/BoardHeader.js
 "use client";
 
 import { useState } from "react";
@@ -9,7 +10,12 @@ export default function BoardHeader({ lists, setLists }) {
 
   const addList = () => {
     if (!newListName.trim()) return;
-    setLists([...lists, { id: Date.now(), name: newListName, cards: [] }]);
+    const newList = {
+      _id: Date.now().toString(),
+      name: newListName,
+      cards: []
+    };
+    setLists([...lists, newList]);
     setNewListName("");
   };
 

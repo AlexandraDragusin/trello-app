@@ -3,56 +3,50 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Input from "@/components/ui/Input"; // Importă componenta Input
-import Button from "@/components/ui/Button"; // Importă componenta Button
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import BoardCard from "./BoardCard";
 
 export default function HomeClient({ initialBoards }) {
   const [boards, setBoards] = useState(initialBoards || []);
   const [newBoardName, setNewBoardName] = useState("");
-  const [editingId, setEditingId] = useState(null);
-  const [editedName, setEditedName] = useState("");
 
-  // Add a new board
   const addBoard = async () => {
     if (!newBoardName.trim()) return;
+    
     const res = await fetch("/api/boards", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newBoardName }),
     });
+    
     const board = await res.json();
     setBoards([...boards, board]);
     setNewBoardName("");
   };
 
-  // Delete board
   const deleteBoard = async (id) => {
     await fetch(`/api/boards/${id}`, { method: "DELETE" });
     setBoards(boards.filter((b) => b._id !== id));
   };
 
-  // Save edited board
-  const saveEdit = async (id) => {
+  const updateBoard = async (id, newName) => {
     try {
       const res = await fetch(`/api/boards/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: editedName }),
+        body: JSON.stringify({ name: newName }),
       });
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('Server error:', errorText);
-        throw new Error(`Failed to update board: ${res.status}`);
-      }
-
+      if (!res.ok) throw new Error('Failed to update board');
+      
       const updated = await res.json();
       setBoards(boards.map((b) => (b._id === id ? updated : b)));
-      setEditingId(null);
-      setEditedName("");
+      return true;
     } catch (error) {
       console.error('Error saving edit:', error);
       alert('Failed to save board name: ' + error.message);
+      return false;
     }
   };
 
@@ -66,6 +60,7 @@ export default function HomeClient({ initialBoards }) {
           placeholder="New board name"
           value={newBoardName}
           onChange={(e) => setNewBoardName(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && addBoard()}
         />
         <Button onClick={addBoard}>
           Add Board
@@ -73,61 +68,21 @@ export default function HomeClient({ initialBoards }) {
       </div>
 
       {/* Board grid */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {boards.map((board) => (
-          <div
+          <BoardCard
             key={board._id}
-            className="bg-white rounded-xl shadow-md p-4 flex flex-col justify-between hover:shadow-lg transition"
-          >
-            {editingId === board._id ? (
-              <div className="flex flex-col gap-2">
-                <Input
-                  value={editedName}
-                  onChange={(e) => setEditedName(e.target.value)}
-                />
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={() => saveEdit(board._id)}
-                    variant="green"
-                  >
-                    Save
-                  </Button>
-                  <Button 
-                    onClick={() => setEditingId(null)}
-                    variant="gray"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <Link href={`/board/${board._id}`}>
-                  <h2 className="text-xl font-semibold text-pink-500 cursor-pointer">
-                    {board.name}
-                  </h2>
-                </Link>
-                <div className="flex gap-3 mt-4">
-                  <button
-                    onClick={() => {
-                      setEditingId(board._id);
-                      setEditedName(board.name);
-                    }}
-                    className="text-yellow-600 text-sm hover:underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => deleteBoard(board._id)}
-                    className="text-red-500 text-sm hover:underline"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+            board={board}
+            onDelete={deleteBoard}
+            onUpdate={updateBoard}
+          />
         ))}
+        
+        {boards.length === 0 && (
+          <div className="col-span-3 text-center py-8 text-gray-500">
+            No boards yet. Create your first board!
+          </div>
+        )}
       </div>
     </main>
   );

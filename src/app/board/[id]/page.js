@@ -2,6 +2,7 @@
 import connect from "@/lib/mongodb";
 import Board from "@/models/Board";
 import BoardClient from "./BoardClient";
+import { transformBoard } from "@/lib/mongoUtils";
 
 export default async function BoardPage({ params }) {
   await connect();
@@ -17,21 +18,7 @@ export default async function BoardPage({ params }) {
     );
   }
 
-  // Convert _id fields to strings
-  const board = {
-    ...boardData,
-    _id: boardData._id.toString(),
-    lists: (boardData.lists || []).map((list) => ({
-      ...list,
-      _id: list._id?.toString() || Date.now().toString(),
-      id: list._id?.toString() || Date.now().toString(),
-      cards: (list.cards || []).map((card) => ({
-        ...card,
-        _id: card._id?.toString() || Date.now().toString(),
-        id: card._id?.toString() || Date.now().toString(),
-      })),
-    })),
-  };
+  const board = transformBoard(boardData);
 
   return <BoardClient board={board} boardId={board._id} />;
 }

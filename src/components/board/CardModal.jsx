@@ -1,20 +1,20 @@
-// components/board/CardModal.jsx
+// components/board/CardModal.js
 "use client";
 
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input"; // Importă componenta Input
+import Input from "@/components/ui/Input";
 
 export default function CardModal({ card, setCard, lists, setLists, onClose }) {
   const save = () => {
     setLists(
-      lists.map((l) =>
-        l.id === card.listId
+      lists.map((list) =>
+        list._id === card.listId
           ? {
-              ...l,
-              cards: l.cards.map((c) => (c.id === card.id ? { ...card } : c)),
+              ...list,
+              cards: list.cards.map((c) => (c._id === card._id ? { ...card } : c)),
             }
-          : l
+          : list
       )
     );
     onClose();
@@ -22,10 +22,10 @@ export default function CardModal({ card, setCard, lists, setLists, onClose }) {
 
   const deleteCard = () => {
     setLists(
-      lists.map((l) =>
-        l.id === card.listId
-          ? { ...l, cards: l.cards.filter((c) => c.id !== card.id) }
-          : l
+      lists.map((list) =>
+        list._id === card.listId
+          ? { ...list, cards: list.cards.filter((c) => c._id !== card._id) }
+          : list
       )
     );
     onClose();
@@ -33,7 +33,7 @@ export default function CardModal({ card, setCard, lists, setLists, onClose }) {
 
   return (
     <Modal onClose={onClose}>
-      <h2 className="text-xl font-semibold mb-4">Edit Card</h2>
+      <h2 className="text-xl font-semibold mb-4 text-gray-500">Edit Card</h2>
 
       <Input
         value={card.title}

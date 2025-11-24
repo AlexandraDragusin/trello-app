@@ -1,3 +1,4 @@
+// components/board/CardItem.js
 "use client";
 
 export default function CardItem({ card, onClick }) {

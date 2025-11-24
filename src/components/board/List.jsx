@@ -1,10 +1,10 @@
-// components/board/List.jsx
+// components/board/List.js
 "use client";
 
 import { useState } from "react";
 import CardItem from "./CardItem";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input"; // Importă componenta Input
+import Input from "@/components/ui/Input";
 
 export default function List({ list, onDelete, onUpdate, onCardSelect }) {
   const [editing, setEditing] = useState(false);
@@ -19,9 +19,14 @@ export default function List({ list, onDelete, onUpdate, onCardSelect }) {
     const title = prompt("Enter card title:");
     if (!title) return;
     const description = prompt("Enter card description:") || "";
+    const newCard = {
+      _id: Date.now().toString(),
+      title,
+      description
+    };
     onUpdate({
       ...list,
-      cards: [...list.cards, { id: Date.now(), title, description }],
+      cards: [...list.cards, newCard],
     });
   };
 
@@ -43,7 +48,7 @@ export default function List({ list, onDelete, onUpdate, onCardSelect }) {
         </div>
       ) : (
         <>
-          <h2 className="font-semibold text-lg mb-2">{list.name}</h2>
+          <h2 className="font-semibold text-lg mb-2 text-gray-500">{list.name}</h2>
           <div className="flex gap-3 mb-4">
             <button
               onClick={() => setEditing(true)}
@@ -62,9 +67,9 @@ export default function List({ list, onDelete, onUpdate, onCardSelect }) {
           <div className="space-y-2">
             {list.cards.map((card) => (
               <CardItem
-                key={card.id}
+                key={card._id}
                 card={card}
-                onClick={() => onCardSelect({ ...card, listId: list.id })}
+                onClick={() => onCardSelect({ ...card, listId: list._id })}
               />
             ))}
           </div>
