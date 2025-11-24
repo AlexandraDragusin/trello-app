@@ -24,7 +24,7 @@ export async function GET() {
   try {
     await connect();
     const boards = await Board.find().lean();
-    return NextResponse.json(transformBoards(boards));
+    return NextResponse.json(transformBoard(boards));
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
