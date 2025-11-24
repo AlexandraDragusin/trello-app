@@ -8,7 +8,7 @@ export default async function HomePage() {
 
   const boardsData = await Board.find().lean();
 
-  cconst boards = transformBoards(boardsData);
+  const boards = transformBoards(boardsData);
 
   return <HomeClient initialBoards={boards} />;
 }
