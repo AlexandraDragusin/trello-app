@@ -1,6 +1,4 @@
 // lib/mongoUtils.js
-import mongoose from "mongoose";
-
 export function transformBoard(board) {
   if (!board) return null;
 
@@ -12,7 +10,7 @@ export function transformBoard(board) {
 }
 
 export function transformList(list) {
-  const listId = list._id?.toString() || new mongoose.Types.ObjectId().toString();
+  const listId = list._id?.toString() || Date.now().toString();
   
   return {
     ...list,
@@ -22,7 +20,7 @@ export function transformList(list) {
 }
 
 export function transformCard(card) {
-  const cardId = card._id?.toString() || new mongoose.Types.ObjectId().toString();
+  const cardId = card._id?.toString() || Date.now().toString();
   
   return {
     ...card,
