@@ -1,42 +1,66 @@
 // app/HomeClient.js
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import BoardCard from "./BoardCard";
 
-export default function HomeClient({ initialBoards }) {
-  const [boards, setBoards] = useState(initialBoards || []);
+export default function HomeClient() {
+  const [boards, setBoards] = useState([]);
   const [newBoardName, setNewBoardName] = useState("");
+  const [loading, setLoading] = useState(true);
 
-   const fetchBoards = async () => {
+  // Fetch boards on component mount
+  useEffect(() => {
+    fetchBoards();
+  }, []);
+
+  const fetchBoards = async () => {
     try {
       const res = await fetch('/api/boards');
+      if (!res.ok) throw new Error('Failed to fetch boards');
+      
       const boardsData = await res.json();
       setBoards(boardsData);
     } catch (error) {
       console.error('Error fetching boards:', error);
+      alert('Error loading boards: ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const addBoard = async () => {
     if (!newBoardName.trim()) return;
 
-    const res = await fetch("/api/boards", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newBoardName }),
-    });
-    
-    const board = await res.json();
-    setBoards([...boards, board]);
-    setNewBoardName("");
+    try {
+      const res = await fetch("/api/boards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newBoardName }),
+      });
+      
+      if (!res.ok) throw new Error('Failed to create board');
+      
+      const board = await res.json();
+      setBoards([...boards, board]);
+      setNewBoardName("");
+    } catch (error) {
+      console.error('Error creating board:', error);
+      alert('Failed to create board: ' + error.message);
+    }
   };
 
   const deleteBoard = async (id) => {
-    await fetch(`/api/boards/${id}`, { method: "DELETE" });
-    setBoards(boards.filter((b) => b._id !== id));
+    try {
+      await fetch(`/api/boards/${id}`, { method: "DELETE" });
+      // Re-fetch to ensure we have latest data
+      await fetchBoards();
+    } catch (error) {
+      console.error('Error deleting board:', error);
+      alert('Failed to delete board: ' + error.message);
+    }
   };
 
   const updateBoard = async (id, newName) => {
@@ -49,7 +73,8 @@ export default function HomeClient({ initialBoards }) {
 
       if (!res.ok) throw new Error('Failed to update board');
       
-	  await fetchBoards();
+      // Re-fetch to ensure we have latest data
+      await fetchBoards();
       return true;
     } catch (error) {
       console.error('Error saving edit:', error);
@@ -57,6 +82,15 @@ export default function HomeClient({ initialBoards }) {
       return false;
     }
   };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gray-100 p-10">
+        <h1 className="text-3xl font-bold mb-6 text-pink-600">Alello</h1>
+        <div className="text-center">Loading boards...</div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-100 p-10">
