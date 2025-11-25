@@ -33,7 +33,7 @@ export default function CardModal({ card, setCard, lists, setLists, onClose }) {
 
   return (
     <Modal onClose={onClose}>
-      <h2 className="text-xl font-semibold mb-4 text-gray-500">Edit Card</h2>
+      <h2 className="text-xl font-semibold mb-4 text-gray-500">Edit card</h2>
 
       <Input
         value={card.title}

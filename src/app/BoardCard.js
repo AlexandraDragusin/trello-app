@@ -39,7 +39,7 @@ export default function BoardCard({ board, onDelete, onUpdate }) {
             autoFocus
           />
           <div className="flex gap-2">
-            <Button onClick={handleSave} variant="green" className="flex-1">
+            <Button onClick={handleSave} variant="pink" className="flex-1">
               Save
             </Button>
             <Button onClick={handleCancel} variant="gray" className="flex-1">
